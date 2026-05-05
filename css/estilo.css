@@ -1,0 +1,78 @@
+body {
+    background-color: #f4f6f9;
+}
+
+/* LOGOS */
+.logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    background-color: white;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+/* TARJETAS */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* IMAGEN PRODUCTO */
+.producto-img {
+    height: 180px;
+    object-fit: contain;
+    padding: 10px;
+    background-color: #fff;
+}
+
+/* PRECIO */
+.precio {
+    font-size: 20px;
+    font-weight: bold;
+    color: #198754;
+    margin-bottom: 10px;
+}
+
+/* IMAGEN CARRITO */
+.img-carrito {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+/* HEADER (más compacto y moderno) */
+.hiloteca-header {
+    background: linear-gradient(135deg, #8fd87b, #42c6d9, #3156b7);
+    padding: 15px 0;
+    color: white;
+}
+
+.titulo-hiloteca {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+}
+
+/* TEXTO USUARIO */
+.usuario-texto {
+    color: white;
+    font-weight: 500;
+}
+
+/* FOOTER */
+.footer-hiloteca {
+    background: #263b42;
+}
+
+/* BOTONES MÁS SUAVES */
+.btn {
+    border-radius: 10px;
+}
