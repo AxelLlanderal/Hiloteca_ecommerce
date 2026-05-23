@@ -1,10 +1,36 @@
 <?php
+/*
+| CONTROLADOR CARRITO
+*/
+
 require_once __DIR__ . '/../models/Producto.php';
 
 class CarritoController {
 
+    /*
+    | VALIDAR CLIENTE
+    */
+    private function validarCliente() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: index.php?accion=login");
+            exit;
+        }
+
+        if ($_SESSION['usuario']['rol'] != 'cliente') {
+            header("Location: index.php?accion=admin_dashboard");
+            exit;
+        }
+    }
+
+    /*
+    | AGREGAR PRODUCTO
+    */
     public function agregar($id) {
-        session_start();
+        $this->validarCliente();
 
         $producto = Producto::obtenerPorId($id);
 
@@ -45,16 +71,22 @@ class CarritoController {
         exit;
     }
 
+    /*
+    | VER CARRITO
+    */
     public function verCarrito() {
-        session_start();
+        $this->validarCliente();
 
         $carrito = $_SESSION['carrito'] ?? [];
 
         require __DIR__ . '/../views/carrito.php';
     }
 
+    /*
+    | ELIMINAR PRODUCTO
+    */
     public function eliminar($id) {
-        session_start();
+        $this->validarCliente();
 
         if (isset($_SESSION['carrito'][$id])) {
             unset($_SESSION['carrito'][$id]);
@@ -64,8 +96,11 @@ class CarritoController {
         exit;
     }
 
+    /*
+    | VACIAR CARRITO
+    */
     public function vaciar() {
-        session_start();
+        $this->validarCliente();
 
         unset($_SESSION['carrito']);
 
@@ -73,8 +108,11 @@ class CarritoController {
         exit;
     }
 
+    /*
+    | AUMENTAR CANTIDAD
+    */
     public function aumentar($id) {
-        session_start();
+        $this->validarCliente();
 
         $producto = Producto::obtenerPorId($id);
 
@@ -88,8 +126,11 @@ class CarritoController {
         exit;
     }
 
+    /*
+    | DISMINUIR CANTIDAD
+    */
     public function disminuir($id) {
-        session_start();
+        $this->validarCliente();
 
         if (isset($_SESSION['carrito'][$id])) {
             $_SESSION['carrito'][$id]['cantidad']--;
@@ -100,75 +141,6 @@ class CarritoController {
         }
 
         header("Location: index.php?accion=ver_carrito");
-        exit;
-    }
-
-    public function finalizar() {
-        session_start();
-        global $conexion;
-
-        if (!isset($_SESSION['usuario'])) {
-            $_SESSION['error'] = "Debes iniciar sesión para finalizar la compra";
-            header("Location: index.php?accion=login");
-            exit;
-        }
-
-        if (empty($_SESSION['carrito'])) {
-            header("Location: index.php?accion=ver_carrito");
-            exit;
-        }
-
-        $usuarioId = $_SESSION['usuario']['id'];
-
-        foreach ($_SESSION['carrito'] as $item) {
-
-            $sqlStock = "SELECT stock_final 
-                         FROM ms_almacen 
-                         WHERE producto_id = :producto_id";
-
-            $stmtStock = $conexion->prepare($sqlStock);
-            $stmtStock->bindParam(':producto_id', $item['id'], PDO::PARAM_INT);
-            $stmtStock->execute();
-
-            $almacen = $stmtStock->fetch(PDO::FETCH_ASSOC);
-
-            if (!$almacen || $almacen['stock_final'] < $item['cantidad']) {
-                header("Location: index.php?stock=limite");
-                exit;
-            }
-
-            $stockAnterior = $almacen['stock_final'];
-            $cantidadMovida = $item['cantidad'];
-            $stockNuevo = $stockAnterior - $cantidadMovida;
-
-            $sqlUpdate = "UPDATE ms_almacen
-                          SET stock_final = :stock_nuevo,
-                              actualizado_por = :usuario
-                          WHERE producto_id = :producto_id";
-
-            $stmtUpdate = $conexion->prepare($sqlUpdate);
-            $stmtUpdate->bindParam(':stock_nuevo', $stockNuevo, PDO::PARAM_INT);
-            $stmtUpdate->bindParam(':usuario', $usuarioId, PDO::PARAM_INT);
-            $stmtUpdate->bindParam(':producto_id', $item['id'], PDO::PARAM_INT);
-            $stmtUpdate->execute();
-
-            $sqlLog = "INSERT INTO logs_stock
-                       (producto_id, stock_anterior, cantidad_movida, stock_nuevo, tipo_movimiento, motivo, actualizado_por)
-                       VALUES
-                       (:producto_id, :stock_anterior, :cantidad_movida, :stock_nuevo, 'salida', 'Compra realizada', :usuario)";
-
-            $stmtLog = $conexion->prepare($sqlLog);
-            $stmtLog->bindParam(':producto_id', $item['id'], PDO::PARAM_INT);
-            $stmtLog->bindParam(':stock_anterior', $stockAnterior, PDO::PARAM_INT);
-            $stmtLog->bindParam(':cantidad_movida', $cantidadMovida, PDO::PARAM_INT);
-            $stmtLog->bindParam(':stock_nuevo', $stockNuevo, PDO::PARAM_INT);
-            $stmtLog->bindParam(':usuario', $usuarioId, PDO::PARAM_INT);
-            $stmtLog->execute();
-        }
-
-        unset($_SESSION['carrito']);
-
-        header("Location: index.php?compra=ok");
         exit;
     }
 }

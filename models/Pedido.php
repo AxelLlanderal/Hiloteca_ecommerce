@@ -1,8 +1,15 @@
 <?php
+/*
+| MODELO PEDIDO
+*/
+
 require_once __DIR__ . '/../config/db.php';
 
 class Pedido {
 
+    /*
+    | CREAR PEDIDO
+    */
     public static function crearPedido($usuario_id, $carrito, $metodo_pago) {
         global $conexion;
 
@@ -47,7 +54,6 @@ class Pedido {
                 $stockAnterior = (int)$almacen['stock_final'];
                 $cantidadMovida = (int)$item['cantidad'];
                 $stockNuevo = $stockAnterior - $cantidadMovida;
-
                 $subtotal = $item['precio'] * $item['cantidad'];
 
                 $sqlDetalle = "INSERT INTO detalle_pedido 
@@ -97,8 +103,49 @@ class Pedido {
 
         } catch (Exception $e) {
             $conexion->rollBack();
-            die("Error al crear pedido: " . $e->getMessage());
+            return false;
         }
+    }
+
+    /*
+    | OBTENER PEDIDOS ADMIN
+    */
+    public static function obtenerTodosAdmin() {
+        global $conexion;
+
+        $sql = "SELECT 
+                    p.id,
+                    p.total,
+                    p.estado,
+                    p.metodo_pago,
+                    p.fecha_creacion,
+                    u.nombre AS cliente,
+                    u.email AS email
+                FROM pedidos p
+                INNER JOIN usuarios u ON p.usuario_id = u.id
+                ORDER BY p.fecha_creacion DESC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /*
+    | ACTUALIZAR ESTADO
+    */
+    public static function actualizarEstado($id, $estado) {
+        global $conexion;
+
+        $sql = "UPDATE pedidos 
+                SET estado = :estado 
+                WHERE id = :id";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':estado', $estado);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 }
 ?>

@@ -1,14 +1,26 @@
 <?php
+/*
+| CONTROLADOR CHECKOUT
+*/
+
 require_once __DIR__ . '/../models/Pedido.php';
 
 class CheckoutController {
 
+    /*
+    | MOSTRAR CHECKOUT
+    */
     public function mostrarCheckout() {
         session_start();
 
         if (!isset($_SESSION['usuario'])) {
             $_SESSION['error'] = "Debes iniciar sesión para finalizar la compra";
             header("Location: index.php?accion=login");
+            exit;
+        }
+
+        if ($_SESSION['usuario']['rol'] != 'cliente') {
+            header("Location: index.php?accion=admin_dashboard");
             exit;
         }
 
@@ -22,11 +34,19 @@ class CheckoutController {
         require __DIR__ . '/../views/checkout.php';
     }
 
+    /*
+    | PROCESAR PAGO
+    */
     public function procesarPago() {
         session_start();
 
         if (!isset($_SESSION['usuario'])) {
             header("Location: index.php?accion=login");
+            exit;
+        }
+
+        if ($_SESSION['usuario']['rol'] != 'cliente') {
+            header("Location: index.php?accion=admin_dashboard");
             exit;
         }
 
@@ -71,6 +91,9 @@ class CheckoutController {
         exit;
     }
 
+    /*
+    | MOSTRAR CONFIRMACIÓN
+    */
     public function confirmacion() {
         session_start();
 

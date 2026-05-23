@@ -1,18 +1,33 @@
 <?php
+/*
+| ARCHIVO PRINCIPAL DE RUTAS
+*/
+
 require_once 'controllers/ProductoController.php';
 require_once 'controllers/CarritoController.php';
 require_once 'controllers/AuthController.php';
 require_once 'controllers/CheckoutController.php';
+require_once 'controllers/ProductoAdminController.php';
+require_once 'controllers/PedidoAdminController.php';
+require_once 'controllers/ReporteAdminController.php';
+require_once 'controllers/MensajeController.php';
+require_once 'controllers/InventarioAdminController.php';
 
 $accion = $_GET['accion'] ?? 'catalogo';
 
 switch ($accion) {
 
+    /*
+    | CATÁLOGO
+    */
     case 'catalogo':
         $controller = new ProductoController();
         $controller->mostrarCatalogo();
         break;
 
+    /*
+    | AUTENTICACIÓN
+    */
     case 'login':
         $controller = new AuthController();
         $controller->mostrarLogin();
@@ -38,6 +53,9 @@ switch ($accion) {
         $controller->logout();
         break;
 
+    /*
+    | CARRITO
+    */
     case 'agregar_carrito':
         $id = $_GET['id'] ?? null;
         $controller = new CarritoController();
@@ -72,6 +90,9 @@ switch ($accion) {
         $controller->disminuir($id);
         break;
 
+    /*
+    | CHECKOUT
+    */
     case 'checkout':
         $controller = new CheckoutController();
         $controller->mostrarCheckout();
@@ -87,6 +108,125 @@ switch ($accion) {
         $controller->confirmacion();
         break;
 
+    /*
+    | ADMIN PRODUCTOS
+    */
+    case 'admin_dashboard':
+        $controller = new ProductoAdminController();
+        $controller->dashboard();
+        break;
+
+    case 'admin_productos':
+        $controller = new ProductoAdminController();
+        $controller->index();
+        break;
+
+    case 'admin_producto_nuevo':
+        $controller = new ProductoAdminController();
+        $controller->crear();
+        break;
+
+    case 'admin_producto_guardar':
+        $controller = new ProductoAdminController();
+        $controller->guardar();
+        break;
+
+    case 'admin_producto_editar':
+        $id = $_GET['id'] ?? null;
+        $controller = new ProductoAdminController();
+        $controller->editar($id);
+        break;
+
+    case 'admin_producto_actualizar':
+        $controller = new ProductoAdminController();
+        $controller->actualizar();
+        break;
+
+    case 'admin_producto_inactivar':
+        $id = $_GET['id'] ?? null;
+        $controller = new ProductoAdminController();
+        $controller->inactivar($id);
+        break;
+
+    case 'admin_producto_activar':
+        $id = $_GET['id'] ?? null;
+        $controller = new ProductoAdminController();
+        $controller->activar($id);
+        break;
+
+    /*
+    | ADMIN PEDIDOS
+    */
+    case 'admin_pedidos':
+        $controller = new PedidoAdminController();
+        $controller->index();
+        break;
+
+    case 'admin_pedido_estado':
+        $controller = new PedidoAdminController();
+        $controller->cambiarEstado();
+        break;
+
+    /*
+    | ADMIN REPORTES
+    */
+    case 'admin_reportes':
+        $controller = new ReporteAdminController();
+        $controller->index();
+        break;
+
+    case 'contacto':
+        $controller = new MensajeController();
+        $controller->contacto();
+        break;
+
+    case 'guardar_mensaje':
+        $controller = new MensajeController();
+        $controller->guardarMensaje();
+        break;
+
+    case 'mensaje_enviado':
+        $controller = new MensajeController();
+        $controller->mensajeEnviado();
+        break;
+
+    case 'admin_mensajes':
+        $controller = new MensajeController();
+        $controller->adminMensajes();
+        break;
+
+    case 'admin_responder_mensaje':
+        $id = $_GET['id'] ?? null;
+        $controller = new MensajeController();
+        $controller->responderMensaje($id);
+        break;
+
+    case 'admin_guardar_respuesta':
+        $controller = new MensajeController();
+        $controller->guardarRespuesta();
+        break;
+
+    case 'mis_mensajes':
+        $controller = new MensajeController();
+        $controller->misMensajes();
+        break;
+    case 'admin_inventario':
+        $controller = new InventarioAdminController();
+        $controller->index();
+        break;
+
+    case 'admin_inventario_movimiento':
+        $controller = new InventarioAdminController();
+        $controller->movimientoForm();
+        break;
+
+    case 'admin_inventario_guardar_movimiento':
+        $controller = new InventarioAdminController();
+        $controller->guardarMovimiento();
+        break;
+    /*
+    | RUTA POR DEFECTO
+    */
     default:
         $controller = new ProductoController();
         $controller->mostrarCatalogo();

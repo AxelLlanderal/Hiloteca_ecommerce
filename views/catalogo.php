@@ -36,7 +36,15 @@ if (isset($_SESSION['carrito'])) {
 
         <div class="d-flex align-items-center gap-3">
 
+            
+
             <?php if (isset($_SESSION['usuario'])): ?>
+                <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']['rol'] == 'cliente'): ?>
+                    <a href="index.php?accion=mis_mensajes" class="btn btn-outline-info btn-sm">
+                        Mis mensajes
+                    </a>
+                <?php endif; ?>
+
                 <span class="usuario-texto">
                     Bienvenido, <?php echo htmlspecialchars($_SESSION['usuario']['nombre']); ?>
                 </span>
@@ -45,6 +53,11 @@ if (isset($_SESSION['carrito'])) {
                     Cerrar sesión
                 </a>
             <?php else: ?>
+
+                <a href="index.php?accion=contacto" class="btn btn-outline-primary btn-sm">
+                    Atención a clientes
+                </a>
+
                 <a href="index.php?accion=login" class="btn btn-outline-light btn-sm">
                     Iniciar sesión
                 </a>
@@ -55,15 +68,19 @@ if (isset($_SESSION['carrito'])) {
             <?php endif; ?>
 
             <!-- BOTÓN CARRITO -->
-            <a href="index.php?accion=ver_carrito" class="btn btn-outline-light position-relative">
-                🛒 Ver carrito
+            <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']['rol'] == 'cliente'): ?>
 
-                <?php if ($totalCarrito > 0): ?>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        <?php echo $totalCarrito; ?>
-                    </span>
-                <?php endif; ?>
-            </a>
+                <a href="index.php?accion=ver_carrito" class="btn btn-outline-light position-relative">
+                    🛒 Ver carrito
+
+                    <?php if ($totalCarrito > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $totalCarrito; ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
+
+            <?php endif; ?>
 
             <img src="img/Logo_blanco_Letras_azul_obscuro_complementos.png" class="logo" alt="Hiloteca">
         </div>
@@ -160,7 +177,7 @@ if (isset($_SESSION['carrito'])) {
 </main>
 
 <!-- FOOTER -->
-<footer class="bg-dark text-white text-center py-3 mt-5">
+<footer class="footer-hiloteca text-white text-center py-3 mt-5">
     Hiloteca - Apuntes digitales educativos
 </footer>
 

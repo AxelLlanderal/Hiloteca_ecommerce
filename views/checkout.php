@@ -118,15 +118,16 @@ foreach ($carrito as $item) {
                 <div class="mb-3">
                     <label class="form-label">CVV</label>
                     <input type="tel" 
-                    name="cvv" 
-                    maxlength="3" 
-                    class="form-control" 
-                    placeholder="123" 
-                    autocomplete="off"
-                    inputmode="numeric"
-                    pattern="[0-9]{3}"
-                    required>
-                <br></br>
+                        name="cvv" 
+                        maxlength="3" 
+                        class="form-control" 
+                        placeholder="123" 
+                        autocomplete="off"
+                        inputmode="numeric"
+                        pattern="[0-9]{3}"
+                        required>
+                </div>
+
                 <button type="submit" class="btn btn-success w-100">
                     Pagar ahora
                 </button>

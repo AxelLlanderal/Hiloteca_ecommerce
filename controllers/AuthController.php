@@ -1,16 +1,29 @@
 <?php
+/*
+| CONTROLADOR AUTENTICACIÓN
+*/
+
 require_once __DIR__ . '/../models/Usuario.php';
 
 class AuthController {
 
+    /*
+    | MOSTRAR LOGIN
+    */
     public function mostrarLogin() {
         require __DIR__ . '/../views/login.php';
     }
 
+    /*
+    | MOSTRAR REGISTRO
+    */
     public function mostrarRegistro() {
         require __DIR__ . '/../views/registro.php';
     }
 
+    /*
+    | REGISTRAR USUARIO
+    */
     public function registrar() {
         session_start();
 
@@ -43,6 +56,9 @@ class AuthController {
         exit;
     }
 
+    /*
+    | VALIDAR LOGIN
+    */
     public function login() {
         session_start();
 
@@ -67,7 +83,11 @@ class AuthController {
 
             $_SESSION['usuario_id'] = $usuario['id'];
 
-            header("Location: index.php");
+            if ($usuario['rol'] == 'admin') {
+                header("Location: index.php?accion=admin_dashboard");
+            } else {
+                header("Location: index.php");
+            }
             exit;
         }
 
@@ -76,6 +96,9 @@ class AuthController {
         exit;
     }
 
+    /*
+    | CERRAR SESIÓN
+    */
     public function logout() {
         session_start();
         session_destroy();
